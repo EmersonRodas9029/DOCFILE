@@ -1,0 +1,79 @@
+[general]
+# ===== CONFIGURACIÓN PRINCIPAL =====
+framerate = 90              # 90 FPS (balance entre fluidez y rendimiento)
+bars = 0                    # Número de barras (automatico)
+bar_width = 3               # Ancho en caracteres
+bar_spacing = 1             # Espacio entre barras
+autosens = 1                # Auto-sensibilidad
+sensitivity = 100           # Solo si autosens=0
+monstercat = 0              # Cambia a 1 para efecto "Monstercat"
+overshoot_hold = 10         # Persistencia de picos (ms)
+overshoot_fall = 40         # Caída de picos (ms)
+overshoot_height_percent = 80 # Altura de picos
+
+[eq]
+# ===== ECUALIZADOR (opcional) =====
+1 = 1.0   # 20 Hz
+2 = 1.2   # 50 Hz  
+3 = 1.3   # 100 Hz
+4 = 1.3   # 200 Hz
+5 = 1.2   # 500 Hz
+6 = 1.0   # 1 kHz
+7 = 0.8   # 2 kHz
+8 = 0.7   # 5 kHz
+9 = 0.6   # 10 kHz
+10 = 0.5  # 20 kHz
+
+[input]
+# ===== FUENTE DE AUDIO =====
+method = pulse              # PulseAudio
+source = auto               # Auto-detectar fuente
+
+[output]
+# ===== SALIDA MÁXIMA CALIDAD =====
+method = sdl
+sdl_width = 450             # Ancho en píxeles
+sdl_height = 400             # Alto en píxeles
+sdl_x = 0
+sdl_y = 0
+# fullscreen = 0              # 1 para pantalla completa
+# shader = ~/.config/cava/shaders/orion_circle_rotate.frag  # Cambia el que quieras
+
+[color]
+# ===== GRADIENTE PERSONALIZADO (Cyan/Magenta) =====
+gradient = 1                # Activar gradiente
+gradient_count = 6          # Número de colores
+gradient_color_1 = '#00FFFF'    # Cyan puro
+gradient_color_2 = '#00BFFF'    # Azul profundo
+gradient_color_3 = '#8A2BE2'    # Azul violeta
+gradient_color_4 = '#FF00FF'    # Magenta
+gradient_color_5 = '#FF1493'    # Rosa fuerte
+gradient_color_6 = '#FF69B4'    # Rosa claro
+background = '#000000'          # Fondo negro (formato HTML para SDL)
+
+[smoothing]
+# ===== SUAVIZADO =====
+integral = 0.6              # Suavizado (0=brusco, 1=muy suave)
+monstercat_lowpass = 0.5    # Filtro para modo Monstercat
+noise_reduction = 0.77      # Reducción de ruido
+waves = 0                   # Ondas decorativas
+
+[shape]
+# ===== FORMA DE BARRAS =====
+shape = sine                # Formas: sine, square, triangle
+shape_amplification = 1.2   # Amplificación de forma
+shape_xy = 1.0              # Distorsión X/Y
+
+[gradient_bars]
+# ===== BARRAS CON GRADIENTE VERTICAL =====
+gradient_bars = 1           # Activar gradiente vertical
+gradient_bars_style = 1     # Estilo 1 (clásico)
+gradient_bars_count = 8
+gradient_bars_color_1 = '#00FFFF'
+gradient_bars_color_2 = '#00BFFF'
+gradient_bars_color_3 = '#1E90FF'
+gradient_bars_color_4 = '#8A2BE2'
+gradient_bars_color_5 = '#FF00FF'
+gradient_bars_color_6 = '#FF1493'
+gradient_bars_color_7 = '#FF69B4'
+gradient_bars_color_8 = '#FFB6C1'
