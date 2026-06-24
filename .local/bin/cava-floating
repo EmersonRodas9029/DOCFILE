@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Cerrar cava si ya está corriendo
+pkill -f "cava" 2>/dev/null
+sleep 0.2
+
+# Agregar regla flotante justo antes de abrir cava
+hyprctl keyword windowrule "float title:cava"
+
+# Pequeña pausa para que se aplique la regla
+sleep 0.3
+
+# Iniciar cava
+kitty --title "cava" -e cava

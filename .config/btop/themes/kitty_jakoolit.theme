@@ -1,0 +1,76 @@
+# Tema Kitty-JaKooLit - Basado en tus colores exactos
+# Colores tomados de tu kitty-colors.conf
+
+# --- Colores principales ---
+theme[main_bg]="#000007"          # background (negro azulado)
+theme[main_fg]="#BFE3EA"          # foreground (azul pastel claro)
+theme[title_bg]="#000007"         # Mismo que background
+theme[title_fg]="#BFE3EA"         # Mismo que foreground
+
+# --- Resaltados ---
+theme[hi_fg]="#9BCED9"            # color7 (azul claro)
+theme[hi_bg]="#0A0A1A"            # Variación del background
+theme[error_fg]="#60697E"         # color1 (gris azulado)
+
+# --- CPU ---
+theme[cpu_bg]="#000007"
+theme[cpu_fg]="#47A6BD"           # color5 (azul medio)
+theme[cpu_box]="#0A0A1A"          # Sutil borde
+
+# --- Memoria ---
+theme[mem_bg]="#000007"
+theme[mem_fg]="#BA4F80"           # color2 (rosa/magenta)
+theme[mem_box]="#0A0A1A"
+
+# --- Disco ---
+theme[disk_bg]="#000007"
+theme[disk_fg]="#4F7F96"          # color3 (azul grisáceo)
+theme[disk_box]="#0A0A1A"
+
+# --- Red ---
+theme[net_bg]="#000007"
+theme[net_fg]="#49AEC4"           # color6 (cian)
+theme[net_box]="#0A0A1A"
+
+# --- Procesos ---
+theme[proc_bg]="#000007"
+theme[proc_fg]="#BFE3EA"          # foreground principal
+theme[proc_box]="#0A0A1A"
+theme[proc_misc]="#9BCED9"        # color7 (detalles)
+
+# --- Gráficos ---
+theme[graph_bg]="#0A0A1A"         # Fondo de gráficos un poco más claro
+theme[graph_fg]="#47A6BD"         # color5 (línea principal)
+theme[graph_line]="#BE869D"       # color4 (línea secundaria)
+theme[graph_text]="#BFE3EA"       # Texto en gráficos
+
+# --- Temperatura ---
+theme[temp_bg]="#000007"
+theme[temp_fg]="#60697E"          # color1 (gris)
+theme[temp_low]="#47A6BD"         # color5 (azul - frío)
+theme[temp_mid]="#9BCED9"         # color7 (azul claro - medio)
+theme[temp_high]="#BA4F80"        # color2 (rosa - caliente)
+
+# --- Estado ---
+theme[status_bg]="#000007"
+theme[status_fg]="#BFE3EA"
+theme[status_misc]="#BE869D"      # color4 (detalles)
+
+# --- Batería ---
+theme[battery_bg]="#000007"
+theme[battery_fg]="#BFE3EA"
+theme[battery_box]="#0A0A1A"
+
+# --- Barra de título ---
+theme[title_bar_bg]="#000007"
+theme[title_bar_fg]="#BFE3EA"
+
+# --- Colores de los gráficos de barra ---
+theme[color0]="#000009"           # color0 (casi negro)
+theme[color1]="#60697E"           # color1 (gris azulado)
+theme[color2]="#BA4F80"           # color2 (rosa)
+theme[color3]="#4F7F96"           # color3 (azul gris)
+theme[color4]="#BE869D"           # color4 (rosa suave)
+theme[color5]="#47A6BD"           # color5 (azul medio)
+theme[color6]="#49AEC4"           # color6 (cian)
+theme[color7]="#9BCED9"           # color7 (azul claro)

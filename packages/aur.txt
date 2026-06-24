@@ -1,0 +1,17 @@
+anydesk-bin
+brave-bin
+docker-desktop
+docker-desktop-debug
+gradia
+minecraft-launcher-debug
+mpvpaper
+mpvpaper-debug
+onlyoffice-bin
+postman-bin
+python312
+python312-debug
+ttf-league-gothic
+ttf-phosphor-icons
+visual-studio-code-bin
+yay-bin
+yay-bin-debug

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Detectar display de XWayland
+XWAYLAND_DISPLAY=$(ps aux | grep -oP 'Xwayland :\d+' | head -1 | cut -d' ' -f2)
+
+if [ -z "$XWAYLAND_DISPLAY" ]; then
+    echo "XWayland no está corriendo"
+    exit 1
+fi
+
+export DISPLAY="$XWAYLAND_DISPLAY"
+export __NV_PRIME_RENDER_OFFLOAD=1
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+
+# Dar permisos X11 si es necesario
+if command -v xhost &> /dev/null; then
+    xhost +SI:localuser:$(whoami) 2>/dev/null
+fi
+
+# Matar procesos anteriores que puedan estar atascados
+pkill -f minecraft-launcher 2>/dev/null
+
+# Lanzar Minecraft
+echo "Lanzando Minecraft en display $DISPLAY"
+/usr/bin/minecraft-launcher "$@"
