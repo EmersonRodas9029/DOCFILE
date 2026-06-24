@@ -48,8 +48,22 @@ fi
 
 step "2/9 — Instalando paquetes (pacman + AUR)"
 echo "Esto puede tardar varios minutos..."
-yay -S --needed --noconfirm - < "$REPO_DIR/packages/pkgs.txt"
-yay -S --needed --noconfirm - < "$REPO_DIR/packages/aur.txt"
+
+install_pkg_list() {
+    local file="$1"
+    # Filtra líneas vacías y paquetes -debug (son símbolos de debug, no instalan solos)
+    mapfile -t pkgs < <(grep -v '^\s*$' "$file" | grep -v '\-debug$')
+    local failed=()
+    for pkg in "${pkgs[@]}"; do
+        yay -S --needed --noconfirm "$pkg" 2>/dev/null || failed+=("$pkg")
+    done
+    if [[ ${#failed[@]} -gt 0 ]]; then
+        warn "No encontrados (omitidos): ${failed[*]}"
+    fi
+}
+
+install_pkg_list "$REPO_DIR/packages/pkgs.txt"
+install_pkg_list "$REPO_DIR/packages/aur.txt"
 
 # Fuente Iosevka (usada en kitty, no está en la lista base)
 yay -S --needed --noconfirm ttf-iosevka-nerd 2>/dev/null || warn "ttf-iosevka-nerd no disponible, instalar manualmente si kitty muestra caracteres rotos"
