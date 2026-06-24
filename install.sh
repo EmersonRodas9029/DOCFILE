@@ -203,9 +203,17 @@ echo -e "${GREEN}  Instalación completa.${RESET}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 echo ""
 echo "Próximos pasos:"
-echo "  1. Reiniciar: sudo reboot"
-echo "  2. SDDM iniciará automáticamente → seleccionar 'Hyprland'"
-echo "  3. Si el audio no funciona, revisar README.md sección 5.3"
-echo "  4. AMBxst (RGB): instalar manualmente si la otra PC lo tiene"
+echo "  1. SDDM iniciará automáticamente → seleccionar 'Hyprland'"
+echo "  2. Si el audio no funciona, revisar README.md sección 5.3"
+echo "  3. AMBxst (RGB): instalar manualmente si la otra PC lo tiene"
 echo ""
 warn "Si no tienes NVIDIA, edita hyprland.conf y elimina las líneas 'DISPLAY=:1' y 'prime-run'"
+echo ""
+
+read -rp "¿Reiniciar ahora? [s/N] " respuesta
+if [[ "$respuesta" =~ ^[sS]$ ]]; then
+    echo -e "${GREEN}Reiniciando...${RESET}"
+    sudo reboot
+else
+    echo "Reinicia cuando quieras con: sudo reboot"
+fi
