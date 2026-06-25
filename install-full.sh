@@ -53,6 +53,34 @@ while true; do sudo -n true; sleep 60; done 2>/dev/null &
 SUDO_KEEPER=$!
 trap "kill $SUDO_KEEPER 2>/dev/null" EXIT
 
+# ── Detección de hardware ─────────────────────────────────────────────────────
+
+step "Hardware — detección automática"
+HAS_NVIDIA=false; HAS_INTEL_GPU=false; HAS_AMD_GPU=false
+HAS_INTEL_CPU=false; HAS_AMD_CPU=false; HAS_BLUETOOTH=false
+
+for path in /sys/bus/pci/devices/*/; do
+    vendor=$(cat "$path/vendor" 2>/dev/null) || continue
+    class=$(cat  "$path/class"  2>/dev/null) || continue
+    [[ "$class" == 0x0300* || "$class" == 0x0302* ]] || continue
+    case "$vendor" in
+        0x10de) HAS_NVIDIA=true    ;;
+        0x8086) HAS_INTEL_GPU=true ;;
+        0x1002) HAS_AMD_GPU=true   ;;
+    esac
+done
+
+grep -qi "intel" /proc/cpuinfo && HAS_INTEL_CPU=true
+grep -qi "amd"   /proc/cpuinfo && HAS_AMD_CPU=true
+ls /sys/class/bluetooth/ 2>/dev/null | grep -q "." && HAS_BLUETOOTH=true
+
+$HAS_NVIDIA     && ok "  GPU NVIDIA"      || true
+$HAS_INTEL_GPU  && ok "  GPU Intel"       || true
+$HAS_AMD_GPU    && ok "  GPU AMD"         || true
+$HAS_INTEL_CPU  && ok "  CPU Intel"       || true
+$HAS_AMD_CPU    && ok "  CPU AMD"         || true
+$HAS_BLUETOOTH  && ok "  Bluetooth"       || true
+
 # ── 1. yay ───────────────────────────────────────────────────────────────────
 
 step "1/10 — yay (AUR helper)"
@@ -84,6 +112,21 @@ install_pkg_list() {
 install_pkg_list "$REPO_DIR/packages/pkgs.txt"
 install_pkg_list "$REPO_DIR/packages/aur.txt"
 yay -S --needed --noconfirm ttf-iosevka-nerd 2>/dev/null || warn "ttf-iosevka-nerd no disponible"
+
+# Paquetes específicos del hardware detectado
+HW_PKGS=()
+$HAS_NVIDIA    && HW_PKGS+=(nvidia-open-dkms nvidia-prime)
+$HAS_INTEL_GPU && HW_PKGS+=(intel-media-driver libva-intel-driver vulkan-intel)
+$HAS_AMD_GPU   && HW_PKGS+=(vulkan-radeon xf86-video-amdgpu xf86-video-ati)
+$HAS_INTEL_CPU && HW_PKGS+=(intel-ucode)
+$HAS_AMD_CPU   && HW_PKGS+=(amd-ucode)
+$HAS_BLUETOOTH && HW_PKGS+=(bluez bluez-utils blueman)
+if [[ ${#HW_PKGS[@]} -gt 0 ]]; then
+    for pkg in "${HW_PKGS[@]}"; do
+        yay -S --needed --noconfirm "$pkg" 2>/dev/null && ok "  $pkg" || warn "  $pkg omitido"
+    done
+fi
+
 ok "Paquetes instalados"
 
 # ── 3. AMBxst ────────────────────────────────────────────────────────────────
@@ -136,9 +179,8 @@ fi
 # ── 5. NVIDIA ─────────────────────────────────────────────────────────────────
 
 step "5/10 — NVIDIA"
-if ! pacman -Qq nvidia-open-dkms nvidia-dkms nvidia &>/dev/null && ! modinfo nvidia &>/dev/null; then
-    warn "  GPU NVIDIA no detectada o driver no instalado — omitiendo sección NVIDIA"
-    warn "  Si tienes NVIDIA, instala el driver y vuelve a ejecutar desde aquí"
+if ! $HAS_NVIDIA; then
+    ok "  Sin GPU NVIDIA — omitiendo"
 else
     sudo cp "$REPO_DIR/system/modprobe.d/audio-nvidia.conf" /etc/modprobe.d/audio-nvidia.conf
     ok "  audio-nvidia.conf"
@@ -184,7 +226,9 @@ fi
 # ── 7. Servicios systemd ─────────────────────────────────────────────────────
 
 step "7/10 — Servicios"
-for svc in NetworkManager sddm bluetooth power-profiles-daemon; do
+SYSTEM_SVCS=(NetworkManager sddm power-profiles-daemon)
+$HAS_BLUETOOTH && SYSTEM_SVCS+=(bluetooth)
+for svc in "${SYSTEM_SVCS[@]}"; do
     sudo systemctl enable --now "$svc" 2>/dev/null && ok "  $svc" || warn "  $svc — no disponible"
 done
 for svc in pipewire pipewire-pulse wireplumber; do
