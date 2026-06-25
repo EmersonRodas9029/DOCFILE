@@ -56,7 +56,7 @@ step "2/4 — AMBxst (entorno visual Hyprland)"
 if command -v ambxst &>/dev/null; then
     ok "AMBxst ya instalado"
 else
-    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh)
+    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh) || { warn "AMBxst falló — instala manualmente luego"; }
     ok "AMBxst instalado"
 fi
 

@@ -92,7 +92,7 @@ step "3/10 — AMBxst (entorno gráfico)"
 if command -v ambxst &>/dev/null; then
     ok "AMBxst ya instalado"
 else
-    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh)
+    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh) || { warn "AMBxst falló — instala manualmente luego"; }
     ok "AMBxst instalado"
 fi
 
@@ -136,29 +136,34 @@ fi
 # ── 5. NVIDIA ─────────────────────────────────────────────────────────────────
 
 step "5/10 — NVIDIA"
-sudo cp "$REPO_DIR/system/modprobe.d/audio-nvidia.conf" /etc/modprobe.d/audio-nvidia.conf
-ok "  audio-nvidia.conf"
-
-MKINIT=/etc/mkinitcpio.conf
-if ! grep -q "nvidia_drm" "$MKINIT"; then
-    sudo sed -i 's/^MODULES=(\(.*\))/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' "$MKINIT"
-    ok "  mkinitcpio — módulos NVIDIA agregados"
+if ! pacman -Qq nvidia-open-dkms nvidia-dkms nvidia &>/dev/null && ! modinfo nvidia &>/dev/null; then
+    warn "  GPU NVIDIA no detectada o driver no instalado — omitiendo sección NVIDIA"
+    warn "  Si tienes NVIDIA, instala el driver y vuelve a ejecutar desde aquí"
 else
-    ok "  mkinitcpio — módulos NVIDIA ya presentes"
-fi
-sudo mkinitcpio -P
-ok "  initramfs regenerado"
+    sudo cp "$REPO_DIR/system/modprobe.d/audio-nvidia.conf" /etc/modprobe.d/audio-nvidia.conf
+    ok "  audio-nvidia.conf"
 
-if [[ -f /etc/default/grub ]]; then
-    if ! grep -q "nvidia_drm.modeset=1" /etc/default/grub; then
-        sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
-        ok "  GRUB — nvidia_drm.modeset=1 agregado"
+    MKINIT=/etc/mkinitcpio.conf
+    if ! grep -q "nvidia_drm" "$MKINIT"; then
+        sudo sed -i 's/^MODULES=(\(.*\))/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' "$MKINIT"
+        ok "  mkinitcpio — módulos NVIDIA agregados"
     else
-        ok "  GRUB — nvidia_drm.modeset=1 ya presente"
+        ok "  mkinitcpio — módulos NVIDIA ya presentes"
     fi
-else
-    warn "  GRUB no detectado — agrega 'nvidia_drm.modeset=1' manualmente a tus kernel params"
+    sudo mkinitcpio -P || warn "  mkinitcpio terminó con errores — revisar manualmente"
+    ok "  initramfs regenerado"
+
+    if [[ -f /etc/default/grub ]]; then
+        if ! grep -q "nvidia_drm.modeset=1" /etc/default/grub; then
+            sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub
+            sudo grub-mkconfig -o /boot/grub/grub.cfg || warn "  grub-mkconfig falló — regenerar manualmente: sudo grub-mkconfig -o /boot/grub/grub.cfg"
+            ok "  GRUB — nvidia_drm.modeset=1 agregado"
+        else
+            ok "  GRUB — nvidia_drm.modeset=1 ya presente"
+        fi
+    else
+        warn "  GRUB no detectado — agrega 'nvidia_drm.modeset=1' manualmente a tus kernel params"
+    fi
 fi
 
 # ── 6. zram ──────────────────────────────────────────────────────────────────
