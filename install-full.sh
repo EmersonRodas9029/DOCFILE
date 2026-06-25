@@ -101,10 +101,24 @@ fi
 step "4/10 — Dotfiles"
 mkdir -p ~/.config ~/.local/bin
 
-for cfg in hypr kitty cava fastfetch btop fish; do
+for cfg in kitty cava fastfetch btop fish; do
     cp -r "$REPO_DIR/.config/$cfg" ~/.config/
     ok "  .config/$cfg"
 done
+
+# hypr: copiar todo excepto hyprland.conf si el usuario ya tiene hyprland.lua
+mkdir -p ~/.config/hypr
+cp "$REPO_DIR/.config/hypr/autostart.sh" ~/.config/hypr/
+HYPR_LUA="$HOME/.config/hypr/hyprland.lua"
+if [[ -f "$HYPR_LUA" ]]; then
+    warn "  hyprland.lua detectado — omitiendo hyprland.conf del repo para no sobreescribir"
+    warn "  Agrega manualmente al final de $HYPR_LUA:"
+    warn "    hyprland.source(\"~/.local/share/ambxst/hyprland.conf\")"
+    warn "  Y copia las keybinds de $REPO_DIR/.config/hypr/hyprland.conf que necesites"
+else
+    cp "$REPO_DIR/.config/hypr/hyprland.conf" ~/.config/hypr/
+    ok "  .config/hypr"
+fi
 
 cp "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml
 ok "  starship.toml"

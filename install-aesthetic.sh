@@ -75,9 +75,10 @@ cp "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml && ok "  starship.t
 
 step "4/4 — Hyprland: activar configuración visual AMBxst"
 HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+HYPR_LUA="$HOME/.config/hypr/hyprland.lua"
 
 if [[ -f "$HYPR_CONF" ]]; then
-    if ! grep -q "ambxst/hyprland.conf" "$HYPR_CONF"; then
+    if ! grep -q "ambxst/hyprland" "$HYPR_CONF"; then
         echo '' >> "$HYPR_CONF"
         echo '# AMBxst — decoraciones, animaciones, keybinds y autostart' >> "$HYPR_CONF"
         echo 'source = ~/.local/share/ambxst/hyprland.conf' >> "$HYPR_CONF"
@@ -85,10 +86,21 @@ if [[ -f "$HYPR_CONF" ]]; then
     else
         ok "  source AMBxst ya presente en hyprland.conf"
     fi
+elif [[ -f "$HYPR_LUA" ]]; then
+    # ponytail: asume la API `hyprland.source()` de hyprlang Lua; ajustar si cambia la API
+    if ! grep -q "ambxst/hyprland" "$HYPR_LUA"; then
+        echo '' >> "$HYPR_LUA"
+        echo '-- AMBxst — decoraciones, animaciones, keybinds y autostart' >> "$HYPR_LUA"
+        echo 'hyprland.source("~/.local/share/ambxst/hyprland.conf")' >> "$HYPR_LUA"
+        ok "  source AMBxst agregado a hyprland.lua"
+    else
+        ok "  source AMBxst ya presente en hyprland.lua"
+    fi
 else
-    warn "  No se encontró $HYPR_CONF"
-    warn "  Agrega manualmente al final de tu hyprland.conf:"
-    warn "  source = ~/.local/share/ambxst/hyprland.conf"
+    warn "  No se encontró hyprland.conf ni hyprland.lua en ~/.config/hypr/"
+    warn "  Agrega manualmente al final de tu config:"
+    warn "    .conf:  source = ~/.local/share/ambxst/hyprland.conf"
+    warn "    .lua:   hyprland.source(\"~/.local/share/ambxst/hyprland.conf\")"
 fi
 
 # ── Fin ───────────────────────────────────────────────────────────────────────
