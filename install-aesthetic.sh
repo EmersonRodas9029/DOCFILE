@@ -56,8 +56,11 @@ step "2/4 — AMBxst (entorno visual Hyprland)"
 if command -v ambxst &>/dev/null; then
     ok "AMBxst ya instalado"
 else
-    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh) || { warn "AMBxst falló — instala manualmente luego"; }
-    ok "AMBxst instalado"
+    if bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh); then
+        ok "AMBxst instalado"
+    else
+        warn "AMBxst falló — instala manualmente luego"
+    fi
 fi
 
 # ── 3. Dotfiles visuales ─────────────────────────────────────────────────────
@@ -65,11 +68,11 @@ fi
 step "3/4 — Configuraciones visuales"
 mkdir -p ~/.config
 
-cp -r "$REPO_DIR/.config/kitty"    ~/.config/ && ok "  kitty"
-cp -r "$REPO_DIR/.config/cava"     ~/.config/ && ok "  cava"
-cp -r "$REPO_DIR/.config/btop"     ~/.config/ && ok "  btop"
-cp -r "$REPO_DIR/.config/fastfetch" ~/.config/ && ok "  fastfetch"
-cp "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml && ok "  starship.toml"
+cp -r "$REPO_DIR/.config/kitty"      ~/.config/           && ok "  kitty"      || warn "  kitty: error al copiar"
+cp -r "$REPO_DIR/.config/cava"       ~/.config/           && ok "  cava"       || warn "  cava: error al copiar"
+cp -r "$REPO_DIR/.config/btop"       ~/.config/           && ok "  btop"       || warn "  btop: error al copiar"
+cp -r "$REPO_DIR/.config/fastfetch"  ~/.config/           && ok "  fastfetch"  || warn "  fastfetch: error al copiar"
+cp    "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml && ok "  starship.toml" || warn "  starship.toml: error al copiar"
 
 # ── 4. Integración con Hyprland ──────────────────────────────────────────────
 

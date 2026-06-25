@@ -115,12 +115,12 @@ yay -S --needed --noconfirm ttf-iosevka-nerd 2>/dev/null || warn "ttf-iosevka-ne
 
 # Paquetes específicos del hardware detectado
 HW_PKGS=()
-$HAS_NVIDIA    && HW_PKGS+=(nvidia-open-dkms nvidia-prime)
-$HAS_INTEL_GPU && HW_PKGS+=(intel-media-driver libva-intel-driver vulkan-intel)
-$HAS_AMD_GPU   && HW_PKGS+=(vulkan-radeon xf86-video-amdgpu xf86-video-ati)
-$HAS_INTEL_CPU && HW_PKGS+=(intel-ucode)
-$HAS_AMD_CPU   && HW_PKGS+=(amd-ucode)
-$HAS_BLUETOOTH && HW_PKGS+=(bluez bluez-utils blueman)
+$HAS_NVIDIA    && HW_PKGS+=(nvidia-open-dkms nvidia-prime)              || true
+$HAS_INTEL_GPU && HW_PKGS+=(intel-media-driver libva-intel-driver vulkan-intel) || true
+$HAS_AMD_GPU   && HW_PKGS+=(vulkan-radeon xf86-video-amdgpu xf86-video-ati) || true
+$HAS_INTEL_CPU && HW_PKGS+=(intel-ucode)                                    || true
+$HAS_AMD_CPU   && HW_PKGS+=(amd-ucode)                                      || true
+$HAS_BLUETOOTH && HW_PKGS+=(bluez bluez-utils blueman)                      || true
 if [[ ${#HW_PKGS[@]} -gt 0 ]]; then
     for pkg in "${HW_PKGS[@]}"; do
         yay -S --needed --noconfirm "$pkg" 2>/dev/null && ok "  $pkg" || warn "  $pkg omitido"
@@ -135,8 +135,11 @@ step "3/10 — AMBxst (entorno gráfico)"
 if command -v ambxst &>/dev/null; then
     ok "AMBxst ya instalado"
 else
-    bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh) || { warn "AMBxst falló — instala manualmente luego"; }
-    ok "AMBxst instalado"
+    if bash <(curl -sL https://raw.githubusercontent.com/Axenide/Ambxst/main/install.sh); then
+        ok "AMBxst instalado"
+    else
+        warn "AMBxst falló — instala manualmente luego"
+    fi
 fi
 
 # ── 4. Dotfiles ──────────────────────────────────────────────────────────────
@@ -227,7 +230,7 @@ fi
 
 step "7/10 — Servicios"
 SYSTEM_SVCS=(NetworkManager sddm power-profiles-daemon)
-$HAS_BLUETOOTH && SYSTEM_SVCS+=(bluetooth)
+$HAS_BLUETOOTH && SYSTEM_SVCS+=(bluetooth) || true
 for svc in "${SYSTEM_SVCS[@]}"; do
     sudo systemctl enable --now "$svc" 2>/dev/null && ok "  $svc" || warn "  $svc — no disponible"
 done
@@ -271,7 +274,7 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo -e "${GREEN}  Instalación completa.${RESET}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 echo ""
-warn "Sin NVIDIA: edita hyprland.conf y elimina las líneas con DISPLAY=:1 y prime-run"
+! $HAS_NVIDIA && warn "Sin NVIDIA: edita hyprland.conf y elimina las líneas con DISPLAY=:1 y prime-run" || true
 echo ""
 read -rp "¿Reiniciar ahora? [s/N] " resp
 [[ "$resp" =~ ^[sS]$ ]] && sudo reboot || echo "Reinicia con: sudo reboot"
