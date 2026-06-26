@@ -13,9 +13,25 @@ die()  { echo -e "${RED}✗ $*${RESET}"; exit 1; }
 [[ $EUID -eq 0 ]] && die "No ejecutes como root."
 command -v pacman &>/dev/null || die "Este script es solo para Arch Linux."
 
+# ── 0. Detectar config de Hyprland ───────────────────────────────────────────
+
+step "0/3 — Detectando configuración de Hyprland"
+HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+HYPR_LUA="$HOME/.config/hypr/hyprland.lua"
+
+if [[ -f "$HYPR_CONF" ]]; then
+    HYPR_FORMAT="conf"
+    ok "Encontrado: hyprland.conf"
+elif [[ -f "$HYPR_LUA" ]]; then
+    HYPR_FORMAT="lua"
+    ok "Encontrado: hyprland.lua"
+else
+    die "No se encontró hyprland.conf ni hyprland.lua en ~/.config/hypr/ — ¿Hyprland está instalado?"
+fi
+
 # ── 1. AMBxst ────────────────────────────────────────────────────────────────
 
-step "1/3 — AMBxst"
+step "1/4 — AMBxst"
 if command -v ambxst &>/dev/null; then
     ok "AMBxst ya instalado"
 else
@@ -24,11 +40,11 @@ else
 fi
 
 ambxst install hyprland
-ok "AMBxst integrado con Hyprland"
+ok "AMBxst integrado con Hyprland (formato: $HYPR_FORMAT)"
 
 # ── 2. Herramientas visuales ─────────────────────────────────────────────────
 
-step "2/3 — Herramientas visuales"
+step "2/4 — Herramientas visuales"
 
 # Instalar yay si no existe
 if ! command -v yay &>/dev/null; then
@@ -51,7 +67,7 @@ done
 
 # ── 3. Dotfiles ───────────────────────────────────────────────────────────────
 
-step "3/3 — Dotfiles"
+step "3/4 — Dotfiles"
 mkdir -p ~/.config
 for cfg in kitty cava btop fastfetch; do
     cp -r "$REPO_DIR/.config/$cfg" ~/.config/ && ok "$cfg" || warn "$cfg: error al copiar"
