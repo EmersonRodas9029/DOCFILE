@@ -102,7 +102,7 @@ step 2 "Herramientas visuales y fuentes"
 
 if ! command -v yay &>/dev/null; then
     tprint "  Instalando yay..." "$CYAN"
-    sudo pacman -S --needed --noconfirm git base-devel fakeroot debugedit
+    sudo pacman -Sy --needed --noconfirm git base-devel fakeroot debugedit
     tmp=$(mktemp -d)
     git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
     (cd "$tmp/yay-bin" && makepkg -si --noconfirm)
