@@ -19,7 +19,7 @@ tprint() {
 }
 
 progress() {
-    local current=$1 total=4 width=32 bar="" filled empty
+    local current=$1 total=5 width=32 bar="" filled empty
     filled=$(( current * width / total ))
     empty=$(( width - filled ))
     for ((i=0; i<filled; i++)); do bar+="█"; done
@@ -72,9 +72,11 @@ HYPR_LUA="$HOME/.config/hypr/hyprland.lua"
 
 if [[ -f "$HYPR_CONF" ]]; then
     HYPR_FORMAT="conf"
+    HYPR_FILE="$HYPR_CONF"
     ok "Encontrado: hyprland.conf"
 elif [[ -f "$HYPR_LUA" ]]; then
     HYPR_FORMAT="lua"
+    HYPR_FILE="$HYPR_LUA"
     ok "Encontrado: hyprland.lua"
 else
     die "No se encontró hyprland.conf ni hyprland.lua — ¿Hyprland está instalado?"
@@ -155,7 +157,7 @@ cp "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml && ok "starship.tom
 
 # ── 4. Integración de shell ───────────────────────────────────────────────────
 
-step 4 "Integración de shell (Starship)"
+step 3 "Integración de shell (Starship)"
 
 SHELL_RC=""
 if [[ "$SHELL" == */zsh ]]; then
@@ -174,6 +176,30 @@ if [[ -n "$SHELL_RC" ]]; then
     fi
 else
     warn "Shell no reconocido — agrega manualmente: eval \"\$(starship init <shell>)\""
+fi
+
+# ── 4. Autostart ─────────────────────────────────────────────────────────────
+
+step 4 "Autostart al iniciar sesión"
+
+if [[ "$HYPR_FORMAT" == "conf" ]]; then
+    if ! grep -q "exec-once.*ambxst" "$HYPR_FILE"; then
+        echo '' >> "$HYPR_FILE"
+        echo '# Autostart AMBxst' >> "$HYPR_FILE"
+        echo 'exec-once = ambxst' >> "$HYPR_FILE"
+        ok "exec-once = ambxst agregado a hyprland.conf"
+    else
+        ok "Autostart de AMBxst ya configurado"
+    fi
+elif [[ "$HYPR_FORMAT" == "lua" ]]; then
+    if ! grep -q "exec_once.*ambxst" "$HYPR_FILE"; then
+        echo '' >> "$HYPR_FILE"
+        echo '-- Autostart AMBxst' >> "$HYPR_FILE"
+        echo 'hyprland.exec_once("ambxst")' >> "$HYPR_FILE"
+        ok "exec_once ambxst agregado a hyprland.lua"
+    else
+        ok "Autostart de AMBxst ya configurado"
+    fi
 fi
 
 # ── Fin ───────────────────────────────────────────────────────────────────────
