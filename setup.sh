@@ -15,7 +15,7 @@ command -v pacman &>/dev/null || die "Este script es solo para Arch Linux."
 
 # ── 0. Detectar config de Hyprland ───────────────────────────────────────────
 
-step "0/3 — Detectando configuración de Hyprland"
+step "0/4 — Detectando configuración de Hyprland"
 HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
 HYPR_LUA="$HOME/.config/hypr/hyprland.lua"
 
@@ -56,7 +56,7 @@ if ! command -v yay &>/dev/null; then
     ok "yay instalado"
 fi
 
-TOOLS=(kitty cava btop fastfetch)
+TOOLS=(kitty cava btop fastfetch starship)
 for pkg in "${TOOLS[@]}"; do
     if command -v "$pkg" &>/dev/null; then
         ok "$pkg ya instalado"
@@ -65,6 +65,15 @@ for pkg in "${TOOLS[@]}"; do
     fi
 done
 
+FONTS=(
+    ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common
+    ttf-phosphor-icons ttf-league-gothic
+    ttf-roboto ttf-roboto-mono
+    noto-fonts noto-fonts-cjk noto-fonts-emoji
+    ttf-dejavu ttf-liberation
+)
+sudo pacman -S --needed --noconfirm "${FONTS[@]}" && ok "Fuentes instaladas" || warn "Algunas fuentes fallaron"
+
 # ── 3. Dotfiles ───────────────────────────────────────────────────────────────
 
 step "3/4 — Dotfiles"
@@ -72,6 +81,7 @@ mkdir -p ~/.config
 for cfg in kitty cava btop fastfetch; do
     cp -r "$REPO_DIR/.config/$cfg" ~/.config/ && ok "$cfg" || warn "$cfg: error al copiar"
 done
+cp "$REPO_DIR/.config/starship.toml" ~/.config/starship.toml && ok "starship.toml" || warn "starship.toml: error al copiar"
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
