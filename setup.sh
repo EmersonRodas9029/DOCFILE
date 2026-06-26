@@ -1,10 +1,12 @@
 #!/bin/bash
 # setup.sh — instalación completa: AMBxst + herramientas visuales + dotfiles
 
-set -e
+set -eE
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
+
+CURRENT_STEP="inicialización"
 
 tprint() {
     local text="$1" color="${2:-$RESET}"
@@ -25,10 +27,28 @@ progress() {
     echo -e "${CYAN}  [${bar}] ${current}/${total}${RESET}"
 }
 
-step() { local n=$1; shift; echo ""; progress "$n"; tprint "▶ $*" "$CYAN$BOLD"; }
+error_handler() {
+    local line=$1 cmd=$2
+    echo ""
+    tprint "  ╔══════════════════════════════════════════╗" "$RED"
+    tprint "  ║        ERROR — Instalación cancelada     ║" "$RED"
+    tprint "  ╚══════════════════════════════════════════╝" "$RED"
+    echo ""
+    tprint "  Paso:    $CURRENT_STEP" "$RED"
+    tprint "  Línea:   $line" "$RED"
+    tprint "  Comando: $cmd" "$RED"
+    echo ""
+    tprint "  Corrige el error y vuelve a ejecutar ./setup.sh" "$YELLOW"
+    echo ""
+    exit 1
+}
+
+trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
+
+step() { local n=$1; shift; CURRENT_STEP="$*"; echo ""; progress "$n"; tprint "▶ $*" "$CYAN$BOLD"; }
 ok()   { tprint "  ✓ $*" "$GREEN"; }
 warn() { tprint "  ⚠ $*" "$YELLOW"; }
-die()  { tprint "  ✗ $*" "$RED"; exit 1; }
+die()  { CURRENT_STEP="${CURRENT_STEP:-inicio}"; error_handler "${BASH_LINENO[0]}" "$*"; }
 
 [[ $EUID -eq 0 ]] && die "No ejecutes como root."
 command -v pacman &>/dev/null || die "Este script es solo para Arch Linux."
