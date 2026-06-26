@@ -37,7 +37,7 @@ sdl_height = 400             # Alto en píxeles
 sdl_x = 0
 sdl_y = 0
 # fullscreen = 0              # 1 para pantalla completa
-# shader = ~/.config/cava/shaders/orion_circle_rotate.frag  # Cambia el que quieras
+shader = pass_through          # Shader básico sin efectos
 
 [color]
 # ===== GRADIENTE PERSONALIZADO (Cyan/Magenta) =====

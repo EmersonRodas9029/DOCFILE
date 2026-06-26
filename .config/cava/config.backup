@@ -1,0 +1,50 @@
+[general]
+# Configuración general
+framerate = 60
+bars = 0
+bar_width = 3
+bar_spacing = 1
+autosens = 1
+sensitivity = 100
+monstercat = 0
+reverse = 0
+waveform = 0
+sleep_timer = 0
+input_delay = 2
+
+[input]
+# Entrada de audio
+method = pulse
+source = auto
+
+[output]
+# Salida visual
+method = sdl
+channels = stereo
+mono_option = average
+target_host = localhost
+target_port = 9001
+
+[color]
+# Colores (Tokyo Night - como Hyprlust)
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#7aa2f7'
+gradient_color_2 = '#73daca'
+gradient_color_3 = '#e0af68'
+gradient_color_4 = '#f7768e'
+gradient_color_5 = '#bb9af7'
+gradient_color_6 = '#9ece6a'
+
+[smoothing]
+# Suavizado y velocidad
+integral = 0.7
+noise_reduction = 0.85
+
+[eq]
+# Ecualizador (todo plano)
+enable = 1
+eq = 1 1 1 1 1 1 1 1
+
+[cava]
+version = 1
